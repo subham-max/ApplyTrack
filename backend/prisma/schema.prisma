@@ -1,0 +1,69 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  applications JobApplication[]
+}
+
+model JobApplication {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  company       String
+  role          String
+  jobUrl        String?
+  status        ApplicationStatus @default(APPLIED)
+  resumeVersion String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  statusEvents  StatusEvent[]
+  reminders     Reminder[]
+
+  @@index([userId])
+}
+
+model StatusEvent {
+  id            String            @id @default(uuid())
+  applicationId String
+  application   JobApplication    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  fromStatus    ApplicationStatus?
+  toStatus      ApplicationStatus
+  note          String?
+  createdAt     DateTime          @default(now())
+
+  @@index([applicationId])
+}
+
+model Reminder {
+  id            String         @id @default(uuid())
+  applicationId String
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  dueDate       DateTime
+  message       String
+  done          Boolean        @default(false)
+
+  @@index([applicationId])
+}
