@@ -1,4 +1,5 @@
 // src/services/applications.service.ts
+import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { NotFoundError } from '../middlewares/errorHandler';
 import {
@@ -8,7 +9,10 @@ import {
 } from '../validations/application.schema';
 
 // TEMP until Module 3 — replace with req.user.id
-const TEMP_USER_ID = 'temp-user-id';
+const TEMP_USER_ID = 'req.user!.sub';
+
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
 
 export const applicationsService = {
   async list() {
@@ -26,6 +30,18 @@ export const applicationsService = {
     if (!app) throw new NotFoundError('Application not found');
     return app;
   },
+  async  getApplicationById(applicationId: string, userId: string) {
+  const app = await prisma.jobApplication.findUnique({ where: { id: applicationId } });
+
+  if (!app) {
+    throw new Error('NOT_FOUND');
+  }
+  if (app.id !== userId) {
+    throw new Error('NOT_FOUND'); // same error as not found — see below
+  }
+
+  return app;
+},
 
   async create(data: CreateApplicationInput) {
     return prisma.jobApplication.create({
@@ -69,4 +85,27 @@ export const applicationsService = {
     await this.getById(id);
     await prisma.jobApplication.delete({ where: { id } });
   },
+
+ async  refresh(refreshToken: string) {
+  let payload: { sub: string };
+
+  try {
+    payload = jwt.verify(refreshToken, REFRESH_SECRET) as { sub: string };
+  } catch {
+    throw new Error('INVALID_REFRESH_TOKEN');
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: payload.sub } });
+  if (!user) {
+    throw new Error('INVALID_REFRESH_TOKEN');
+  }
+
+  const accessToken = jwt.sign(
+    { sub: user.id, email: user.email },
+    ACCESS_SECRET,
+    { expiresIn: '15m' }
+  );
+
+  return { accessToken };
+}
 };
