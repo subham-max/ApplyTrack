@@ -1,0 +1,15 @@
+info:
+  name: ID Specific Search
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: http://localhost:5001/applications/18553603-05e6-4531-bfe4-f144b86f5799
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

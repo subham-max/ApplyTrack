@@ -1,0 +1,22 @@
+info:
+  name: Login
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: http://localhost:5001/auth/login
+  body:
+    type: json
+    data: |-
+      {
+        "email": "subhampaul011@gmail.com",
+        "password": "!@#Subham123"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

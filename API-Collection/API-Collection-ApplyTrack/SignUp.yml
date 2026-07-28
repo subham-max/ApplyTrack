@@ -1,0 +1,22 @@
+info:
+  name: SignUp
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:5001/auth/signup
+  body:
+    type: json
+    data: |-
+      {
+        "email": "subhampaul011@gmail.com",
+        "password": "!@#Subham123"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

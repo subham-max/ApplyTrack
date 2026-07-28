@@ -1,0 +1,17 @@
+info:
+  name: Application List
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: http://localhost:5001/applications/
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Y2Y5OWUxNS00ZTZmLTRmNWEtOWNlMy0wYmY5M2M1Zjk2NzciLCJlbWFpbCI6InN1YmhhbXBhdWwwMTFAZ21haWwuY29tIiwiaWF0IjoxNzg1MjY1MTM2LCJleHAiOjE3ODUyNjYwMzZ9.rDmPURdR8J8-P3aWZM7d2XNHJ527ETjlH7IOVfA9H0Y
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
